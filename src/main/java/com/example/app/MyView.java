@@ -23,19 +23,33 @@ public class MyView extends HorizontalLayout {
 
     private void init() {
         setSizeFull();
-
+//
         verticalLayout = new VerticalLayout();
         verticalLayout.setHeight(100.0f, Unit.PERCENTAGE);
-        verticalLayout.setWidth(10.0f, Unit.PERCENTAGE);
+        verticalLayout.setWidth(150.0f, Unit.PIXELS);
+//
+        Button buttonGenerator = new Button("Content Generator");
+        verticalLayout.add(buttonGenerator);
 
-        button = createButton();
-        verticalLayout.add(button);
+        buttonGenerator.addClickListener(buttonClickEvent ->
+                addContent());
 
-        board = new Board();
-        board.setSizeFull();
+        add(verticalLayout);
+    }
 
-        add(verticalLayout, board);
-        dropButton(board);
+    private void addContent() {
+        if (counter==0){
+            VerticalLayout verticalLayout1 = new VerticalLayout();
+            verticalLayout1.add(createButton());
+            add(verticalLayout1);
+        }else{
+            if (counter==1){
+                VerticalLayout verticalLayout2 = new VerticalLayout();
+                verticalLayout2.add(createButton());
+                add(verticalLayout2);
+            }
+        }
+
     }
 
     private void dragButton(Button button) {
@@ -45,15 +59,15 @@ public class MyView extends HorizontalLayout {
     }
 
     private void dropButton(Board board) {
-        DropTarget<Board> dropTarget = DropTarget.create(board);
-        dropTarget.addDropListener(event -> {
-            verticalLayout.add(createButton());
-            Row row0 = new Row();
-            Button button = (Button) event.getDragSourceComponent().get();
-            button.setSizeFull();
-            row0.add(button);
-            board.add(row0);
-        });
+//        DropTarget<Board> dropTarget = DropTarget.create(board);
+//        dropTarget.addDropListener(event -> {
+//            verticalLayout.add(createButton());
+//            Row row0 = new Row();
+//            Button button = (Button) event.getDragSourceComponent().get();
+//            button.setSizeFull();
+//            row0.add(button);
+//            board.add(row0);
+//        });
     }
 
     private Button createButton() {
@@ -61,6 +75,7 @@ public class MyView extends HorizontalLayout {
         Button newButton = new Button(String.valueOf(counter),
                 buttonClickEvent -> button.setHeight(30, Unit.PERCENTAGE));
         dragButton(newButton);
+        newButton.setSizeFull();
         return newButton;
     }
 }
