@@ -1,5 +1,6 @@
 package com.example.app;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.board.Board;
 import com.vaadin.flow.component.button.Button;
@@ -82,9 +83,26 @@ public class MyView extends HorizontalLayout {
         DropTarget<Button> dropTarget = DropTarget.create(button);
         dropTarget.addDropListener(event -> {
             Button newButton = createButton();
-            Button buttonOld = event.getComponent();
-            buttonOld.setText(newButton.getText());
+            Button oldButton = event.getComponent();
+            replaceButton(oldButton, newButton);
         });
+    }
+
+    private void replaceButton(Button oldButton, Button newButton) {
+        Component component = oldButton.getParent().get();
+        if (component.getClass().equals(VerticalLayout.class)) {
+            VerticalLayout verticalLayout = (VerticalLayout) component;
+            int indexButton = verticalLayout.indexOf(oldButton);
+            verticalLayout.remove(oldButton);
+            verticalLayout.addComponentAtIndex(indexButton, newButton);
+        } else {
+            if (component.getClass().equals(HorizontalLayout.class)) {
+                HorizontalLayout horizontalLayout = (HorizontalLayout) component;
+                int indexButton = horizontalLayout.indexOf(oldButton);
+                horizontalLayout.remove(oldButton);
+                horizontalLayout.addComponentAtIndex(indexButton, newButton);
+            }
+        }
     }
 
     private Button createButton() {
