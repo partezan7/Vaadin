@@ -2,7 +2,6 @@ package com.example.app;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Unit;
-import com.vaadin.flow.component.board.Board;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dnd.DragSource;
 import com.vaadin.flow.component.dnd.DropTarget;
@@ -12,6 +11,7 @@ import com.vaadin.flow.router.Route;
 
 @Route("")
 public class MyView extends HorizontalLayout {
+    String CONTENT_GENERATOR = "Content Generator";
     int counter = 0;
     private VerticalLayout verticalLayout;
     private VerticalLayout verticalLayout1;
@@ -19,7 +19,6 @@ public class MyView extends HorizontalLayout {
     private HorizontalLayout horizontalLayout;
     private VerticalLayout verticalLayout3;
     private VerticalLayout verticalLayout4;
-    private Board board;
 
     public MyView() {
         init();
@@ -30,10 +29,10 @@ public class MyView extends HorizontalLayout {
         verticalLayout = new VerticalLayout();
         verticalLayout.setHeight(100.0f, Unit.PERCENTAGE);
         verticalLayout.setWidth(150.0f, Unit.PIXELS);
-        Button buttonGenerator = new Button("Content Generator");
-        dragButton(buttonGenerator);
-        verticalLayout.add(buttonGenerator);
-        buttonGenerator.addClickListener(buttonClickEvent -> addContent());
+        Button contentGeneratorButton = new Button(CONTENT_GENERATOR);
+        contentGeneratorButton.addClickListener(buttonClickEvent -> addContent());
+        makeButtonDraggable(contentGeneratorButton);
+        verticalLayout.add(contentGeneratorButton);
         add(verticalLayout);
     }
 
@@ -41,20 +40,20 @@ public class MyView extends HorizontalLayout {
         switch (counter) {
             case 0:
                 verticalLayout1 = new VerticalLayout();
-                verticalLayout1.add(createButton());
+                verticalLayout1.add(createDragAndDropButton());
                 add(verticalLayout1);
                 break;
             case 1:
                 verticalLayout2 = new VerticalLayout();
-                verticalLayout2.add(createButton());
+                verticalLayout2.add(createDragAndDropButton());
                 add(verticalLayout2);
                 break;
             case 2:
-                verticalLayout2.add(createButton());
+                verticalLayout2.add(createDragAndDropButton());
                 break;
             case 3:
                 verticalLayout3 = new VerticalLayout();
-                verticalLayout3.add(createButton());
+                verticalLayout3.add(createDragAndDropButton());
                 add(verticalLayout3);
                 break;
             case 4:
@@ -62,54 +61,63 @@ public class MyView extends HorizontalLayout {
                 horizontalLayout.add(this.getComponentAt(1), this.getComponentAt(2));
                 horizontalLayout.setSizeFull();
                 verticalLayout4 = new VerticalLayout();
-                verticalLayout4.add(createButton());
+                verticalLayout4.add(createDragAndDropButton());
                 verticalLayout4.add(horizontalLayout);
                 addComponentAtIndex(1, verticalLayout4);
                 break;
             case 5:
                 horizontalLayout.addComponentAtIndex(2, horizontalLayout.getComponentAt(1));
-                horizontalLayout.addComponentAtIndex(1, createButton());
+                horizontalLayout.addComponentAtIndex(1, createDragAndDropButton());
                 break;
         }
     }
 
-    private void dragButton(Button button) {
-        DragSource<Button> dragSource = DragSource.create(button);
-        dragSource.addDragEndListener(event -> {
-        });
-    }
-
-    private void dropButton(Button button) {
-        DropTarget<Button> dropTarget = DropTarget.create(button);
-        dropTarget.addDropListener(event -> {
-            Button newButton = createButton();
-            Button oldButton = event.getComponent();
-            replaceButton(oldButton, newButton);
-        });
-    }
-
-    private void replaceButton(Button oldButton, Button newButton) {
-        Component component = oldButton.getParent().get();
-        if (component.getClass().equals(VerticalLayout.class)) {
-            VerticalLayout verticalLayout = (VerticalLayout) component;
-            int indexButton = verticalLayout.indexOf(oldButton);
-            verticalLayout.remove(oldButton);
-            verticalLayout.addComponentAtIndex(indexButton, newButton);
-        } else {
-            if (component.getClass().equals(HorizontalLayout.class)) {
-                HorizontalLayout horizontalLayout = (HorizontalLayout) component;
-                int indexButton = horizontalLayout.indexOf(oldButton);
-                horizontalLayout.remove(oldButton);
-                horizontalLayout.addComponentAtIndex(indexButton, newButton);
-            }
-        }
-    }
-
-    private Button createButton() {
+    private Button createDragAndDropButton() {
         counter++;
         Button newButton = new Button(String.valueOf(counter));
-        dropButton(newButton);
         newButton.setSizeFull();
+        makeButtonDraggable(newButton);
+        makeButtonDropTarget(newButton);
         return newButton;
+    }
+
+    private void makeButtonDraggable(Button button) {
+        DragSource<Button> dragSource = DragSource.create(button);
+    }
+
+    private void makeButtonDropTarget(Button button) {
+        DropTarget<Button> dropTarget = DropTarget.create(button);
+        dropTarget.addDropListener(event -> {
+            Button targetButton = event.getComponent();
+            Button sourceButton = (Button) event.getDragSourceComponent().get();
+            if (sourceButton.getText().equals(CONTENT_GENERATOR)) {
+                changeButton(targetButton);
+            } else swapButtons(targetButton, sourceButton);
+        });
+    }
+
+    private void changeButton(Button targetButton) {
+        Button newButton = createDragAndDropButton();
+        Component targetComponentParent = targetButton.getParent().get();
+        var targetLayout = targetComponentParent instanceof VerticalLayout
+                ? ((VerticalLayout) targetComponentParent) : (HorizontalLayout) targetComponentParent;
+        int indexButton = targetLayout.indexOf(targetButton);
+        targetLayout.addComponentAtIndex(indexButton, newButton);
+        targetLayout.remove(targetButton);
+    }
+
+    private void swapButtons(Button targetButton, Button sourceButton) {
+        Component targetComponentParent = targetButton.getParent().get();
+        Component sourceComponentParent = sourceButton.getParent().get();
+        var targetLayout = targetComponentParent instanceof VerticalLayout
+                ? ((VerticalLayout) targetComponentParent) : (HorizontalLayout) targetComponentParent;
+        var sourceLayout = sourceComponentParent instanceof VerticalLayout
+                ? ((VerticalLayout) sourceComponentParent) : (HorizontalLayout) sourceComponentParent;
+        int targetButtonIndex = targetLayout.indexOf(targetButton);
+        int sourceButtonIndex = sourceLayout.indexOf(sourceButton);
+        targetLayout.addComponentAtIndex(targetButtonIndex, sourceButton);
+        targetLayout.remove(targetButton);
+        sourceLayout.addComponentAtIndex(sourceButtonIndex, targetButton);
+        sourceLayout.remove(sourceButton);
     }
 }
