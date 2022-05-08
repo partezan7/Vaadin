@@ -12,7 +12,8 @@ import com.vaadin.flow.router.Route;
 @Route("")
 public class MyView extends HorizontalLayout {
     String CONTENT_GENERATOR = "Content Generator";
-    int counter = 0;
+    private int contentCounter = 0;
+    private int buttenCounter = 0;
     private VerticalLayout verticalLayout;
     private VerticalLayout verticalLayout1;
     private VerticalLayout verticalLayout2;
@@ -30,14 +31,18 @@ public class MyView extends HorizontalLayout {
         verticalLayout.setHeight(100.0f, Unit.PERCENTAGE);
         verticalLayout.setWidth(150.0f, Unit.PIXELS);
         Button contentGeneratorButton = new Button(CONTENT_GENERATOR);
-        contentGeneratorButton.addClickListener(buttonClickEvent -> addContent());
+        contentGeneratorButton.addClickListener(buttonClickEvent -> {
+            addContent();
+            buttenCounter++;
+
+        });
         makeButtonDraggable(contentGeneratorButton);
         verticalLayout.add(contentGeneratorButton);
         add(verticalLayout);
     }
 
     private void addContent() {
-        switch (counter) {
+        switch (buttenCounter) {
             case 0:
                 verticalLayout1 = new VerticalLayout();
                 verticalLayout1.add(createDragAndDropButton());
@@ -73,8 +78,8 @@ public class MyView extends HorizontalLayout {
     }
 
     private Button createDragAndDropButton() {
-        counter++;
-        Button newButton = new Button(String.valueOf(counter));
+        contentCounter++;
+        Button newButton = new Button(String.valueOf(contentCounter));
         newButton.setSizeFull();
         makeButtonDraggable(newButton);
         makeButtonDropTarget(newButton);
@@ -90,6 +95,7 @@ public class MyView extends HorizontalLayout {
         dropTarget.addDropListener(event -> {
             Button targetButton = event.getComponent();
             Button sourceButton = (Button) event.getDragSourceComponent().get();
+            if (targetButton == sourceButton) return;
             if (sourceButton.getText().equals(CONTENT_GENERATOR)) {
                 changeButton(targetButton);
             } else swapButtons(targetButton, sourceButton);
@@ -109,6 +115,16 @@ public class MyView extends HorizontalLayout {
     private void swapButtons(Button targetButton, Button sourceButton) {
         Component targetComponentParent = targetButton.getParent().get();
         Component sourceComponentParent = sourceButton.getParent().get();
+        if (targetComponentParent==sourceComponentParent) {
+            var layout = targetComponentParent instanceof VerticalLayout
+                    ? ((VerticalLayout) targetComponentParent) : (HorizontalLayout) targetComponentParent;
+            int button1Index = layout.indexOf(targetButton);
+            int button2Index = layout.indexOf(sourceButton);
+            layout.remove(targetButton);
+            layout.addComponentAtIndex(button1Index, sourceButton);
+            layout.addComponentAtIndex(button2Index, targetButton);
+            return;
+        }
         var targetLayout = targetComponentParent instanceof VerticalLayout
                 ? ((VerticalLayout) targetComponentParent) : (HorizontalLayout) targetComponentParent;
         var sourceLayout = sourceComponentParent instanceof VerticalLayout
