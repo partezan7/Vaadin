@@ -1,4 +1,5 @@
 import { LitElement, html, css, customElement } from 'lit-element';
+import '@vaadin/vertical-layout/src/vaadin-vertical-layout.js';
 
 @customElement('my-view')
 export class MyView extends LitElement {
@@ -13,7 +14,9 @@ export class MyView extends LitElement {
 
   render() {
     return html`
-
+<vaadin-vertical-layout theme="spacing" style="width: 100%; height: 100%; align-items: flex-end; justify-content: center;">
+ 1
+</vaadin-vertical-layout>
 `;
   }
 

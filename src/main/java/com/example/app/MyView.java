@@ -2,6 +2,7 @@ package com.example.app;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.board.Board;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dnd.DragSource;
 import com.vaadin.flow.component.dnd.DropTarget;
@@ -15,6 +16,7 @@ public class MyView extends HorizontalLayout {
     private int contentCounter = 0;
     private int buttenCounter = 0;
     private VerticalLayout verticalLayout;
+    private Box startBox;
     private VerticalLayout verticalLayout1;
     private VerticalLayout verticalLayout2;
     private HorizontalLayout horizontalLayout;
@@ -25,64 +27,64 @@ public class MyView extends HorizontalLayout {
         init();
     }
 
-    private void init() {
-        setSizeFull();
-        verticalLayout = new VerticalLayout();
-        verticalLayout.setHeight(100.0f, Unit.PERCENTAGE);
-        verticalLayout.setWidth(150.0f, Unit.PIXELS);
-        Button contentGeneratorButton = new Button(CONTENT_GENERATOR);
-        contentGeneratorButton.addClickListener(buttonClickEvent -> {
-            addContent();
-            buttenCounter++;
-
-        });
-        makeButtonDraggable(contentGeneratorButton);
-        verticalLayout.add(contentGeneratorButton);
-        add(verticalLayout);
-    }
-
-    private void addContent() {
-        switch (buttenCounter) {
-            case 0:
-                verticalLayout1 = new VerticalLayout();
-                verticalLayout1.add(createDragAndDropButton());
-                add(verticalLayout1);
-                break;
-            case 1:
-                verticalLayout2 = new VerticalLayout();
-                verticalLayout2.add(createDragAndDropButton());
-                add(verticalLayout2);
-                break;
-            case 2:
-                verticalLayout2.add(createDragAndDropButton());
-                break;
-            case 3:
-                verticalLayout3 = new VerticalLayout();
-                verticalLayout3.add(createDragAndDropButton());
-                add(verticalLayout3);
-                break;
-            case 4:
-                horizontalLayout = new HorizontalLayout();
-                horizontalLayout.add(this.getComponentAt(1), this.getComponentAt(2));
-                horizontalLayout.setSizeFull();
-                verticalLayout4 = new VerticalLayout();
-                verticalLayout4.add(createDragAndDropButton());
-                verticalLayout4.add(horizontalLayout);
-                addComponentAtIndex(1, verticalLayout4);
-                break;
-            case 5:
-                horizontalLayout.addComponentAtIndex(2, horizontalLayout.getComponentAt(1));
-                horizontalLayout.addComponentAtIndex(1, createDragAndDropButton());
-                break;
-        }
-    }
+//    private void init() {
+//        setSizeFull();
+//        verticalLayout = new VerticalLayout();
+//        verticalLayout.setHeight(100.0f, Unit.PERCENTAGE);
+//        verticalLayout.setWidth(150.0f, Unit.PIXELS);
+//        Button contentGeneratorButton = new Button(CONTENT_GENERATOR);
+//        contentGeneratorButton.addClickListener(buttonClickEvent -> {
+//            addContent();
+//            buttenCounter++;
+//
+//        });
+//        makeButtonDraggable(contentGeneratorButton);
+//        verticalLayout.add(contentGeneratorButton);
+//        add(verticalLayout);
+//    }
+//
+//    private void addContent() {
+//        switch (buttenCounter) {
+//            case 0:
+//                verticalLayout1 = new VerticalLayout();
+//                verticalLayout1.add(createDragAndDropButton());
+//                add(verticalLayout1);
+//                break;
+//            case 1:
+//                verticalLayout2 = new VerticalLayout();
+//                verticalLayout2.add(createDragAndDropButton());
+//                add(verticalLayout2);
+//                break;
+//            case 2:
+//                verticalLayout2.add(createDragAndDropButton());
+//                break;
+//            case 3:
+//                verticalLayout3 = new VerticalLayout();
+//                verticalLayout3.add(createDragAndDropButton());
+//                add(verticalLayout3);
+//                break;
+//            case 4:
+//                horizontalLayout = new HorizontalLayout();
+//                horizontalLayout.add(this.getComponentAt(1), this.getComponentAt(2));
+//                horizontalLayout.setSizeFull();
+//                verticalLayout4 = new VerticalLayout();
+//                verticalLayout4.add(createDragAndDropButton());
+//                verticalLayout4.add(horizontalLayout);
+//                addComponentAtIndex(1, verticalLayout4);
+//                break;
+//            case 5:
+//                horizontalLayout.addComponentAtIndex(2, horizontalLayout.getComponentAt(1));
+//                horizontalLayout.addComponentAtIndex(1, createDragAndDropButton());
+//                break;
+//        }
+//    }
 
     private Button createDragAndDropButton() {
         contentCounter++;
         Button newButton = new Button(String.valueOf(contentCounter));
         newButton.setSizeFull();
         makeButtonDraggable(newButton);
-        makeButtonDropTarget(newButton);
+        makeButtonAsDropTarget(newButton);
         return newButton;
     }
 
@@ -90,7 +92,7 @@ public class MyView extends HorizontalLayout {
         DragSource<Button> dragSource = DragSource.create(button);
     }
 
-    private void makeButtonDropTarget(Button button) {
+    private void makeButtonAsDropTarget(Button button) {
         DropTarget<Button> dropTarget = DropTarget.create(button);
         dropTarget.addDropListener(event -> {
             Button targetButton = event.getComponent();
@@ -115,7 +117,7 @@ public class MyView extends HorizontalLayout {
     private void swapButtons(Button targetButton, Button sourceButton) {
         Component targetComponentParent = targetButton.getParent().get();
         Component sourceComponentParent = sourceButton.getParent().get();
-        if (targetComponentParent==sourceComponentParent) {
+        if (targetComponentParent == sourceComponentParent) {
             var layout = targetComponentParent instanceof VerticalLayout
                     ? ((VerticalLayout) targetComponentParent) : (HorizontalLayout) targetComponentParent;
             int button1Index = layout.indexOf(targetButton);
@@ -136,4 +138,63 @@ public class MyView extends HorizontalLayout {
         sourceLayout.addComponentAtIndex(sourceButtonIndex, targetButton);
         sourceLayout.remove(sourceButton);
     }
+
+
+    private void init() {
+        setSizeFull();
+//        setMargin(false);
+//        setSpacing(false);
+//        setPadding(false);
+        verticalLayout = new VerticalLayout();
+        verticalLayout.setHeight(100.0f, Unit.PERCENTAGE);
+        verticalLayout.setWidth(150.0f, Unit.PIXELS);
+        Button contentGeneratorButton = new Button(CONTENT_GENERATOR);
+        contentGeneratorButton.addClickListener(buttonClickEvent -> {
+            addContent();
+            buttenCounter++;
+
+        });
+        makeButtonDraggable(contentGeneratorButton);
+        verticalLayout.add(contentGeneratorButton);
+        add(verticalLayout);
+        Board board = new Board();
+        board.setSizeFull();
+        startBox = new Box(board);
+        add(startBox);
+    }
+    private void addContent() {
+        switch (buttenCounter) {
+            case 0:
+                Box box = new Box(createDragAndDropButton());
+                add(box);
+                break;
+            case 1:
+                Box box1 = new Box(createDragAndDropButton());
+                add(box1);
+                break;
+//            case 2:
+//                verticalLayout2.add(createDragAndDropButton());
+//                break;
+//            case 3:
+//                verticalLayout3 = new VerticalLayout();
+//                verticalLayout3.add(createDragAndDropButton());
+//                add(verticalLayout3);
+//                break;
+//            case 4:
+//                horizontalLayout = new HorizontalLayout();
+//                horizontalLayout.add(this.getComponentAt(1), this.getComponentAt(2));
+//                horizontalLayout.setSizeFull();
+//                verticalLayout4 = new VerticalLayout();
+//                verticalLayout4.add(createDragAndDropButton());
+//                verticalLayout4.add(horizontalLayout);
+//                addComponentAtIndex(1, verticalLayout4);
+//                break;
+//            case 5:
+//                horizontalLayout.addComponentAtIndex(2, horizontalLayout.getComponentAt(1));
+//                horizontalLayout.addComponentAtIndex(1, createDragAndDropButton());
+//                break;
+
+        }
+    }
+
 }
