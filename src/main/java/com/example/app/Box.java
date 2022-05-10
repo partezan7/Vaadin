@@ -46,13 +46,13 @@ public class Box extends HorizontalLayout {
         middle.add(boxComponent);
     }
 
-    public void pitAbove(Component boxComponent) {
+    public void putAbove(Component boxComponent) {
         middle.addComponentAsFirst(boxComponent);
     }
-
-    public Component get(int index) {
-        return middle.getComponentAt(index);
-    }
+//
+//    public Component get(int index) {
+//        return middle.getComponentAt(index);
+//    }
 
     public void clear() {
         container.removeAll();
@@ -63,8 +63,23 @@ public class Box extends HorizontalLayout {
         settMarginSpacingPadding(this, false, false, false);
         left = makeLayout(Insert.LEFT);
         right = makeLayout(Insert.RIGHT);
+        center = makeCenter();
+        this.add(left, center, right);
+    }
+
+    private VerticalLayout makeCenter (){
         top = makeLayout(Insert.TOP);
         bottom = makeLayout(Insert.BOTTOM);
+        container = makeContainer();
+        middle = new VerticalLayout(container);
+        middle.setSizeFull();
+        settMarginSpacingPadding(middle, false, false, false);
+        center = new VerticalLayout(top, middle, bottom);
+        settMarginSpacingPadding(center, false, false, false);
+        return center;
+    }
+
+    private HorizontalLayout makeContainer (){
         container = new HorizontalLayout();
         container.setSizeFull();
         DropTarget<HorizontalLayout> dropContainer = DropTarget.create(container);
@@ -72,13 +87,7 @@ public class Box extends HorizontalLayout {
             Box newBox = new Box(MyView.createDragAndDropButton());
             container.add(newBox);
         });
-        middle = new VerticalLayout(container);
-        middle.setSizeFull();
-        settMarginSpacingPadding(middle, false, false, false);
-        center = new VerticalLayout(top, middle, bottom);
-        center.setSizeFull();
-        settMarginSpacingPadding(center, false, false, false);
-        this.add(left, center, right);
+        return container;
     }
 
     private VerticalLayout makeLayout(Insert direction) {

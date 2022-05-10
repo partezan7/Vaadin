@@ -63,7 +63,7 @@ public class MyView extends HorizontalLayout {
                 break;
             case 4:
                 Box box4 = new Box(createDragAndDropButton());
-                startBox.pitAbove(box4);
+                startBox.putAbove(box4);
                 break;
         }
     }
