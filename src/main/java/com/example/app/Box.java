@@ -2,7 +2,6 @@ package com.example.app;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Unit;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dnd.DropTarget;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -11,8 +10,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class Box extends HorizontalLayout {
-    final float BORDER = 10.0f;
+    final float BORDER = 20.0f;
+
     private enum Insert {LEFT, RIGHT, TOP, BOTTOM}
+
     private VerticalLayout left;
     private VerticalLayout right;
     private VerticalLayout top;
@@ -49,13 +50,10 @@ public class Box extends HorizontalLayout {
     public void putAbove(Component boxComponent) {
         middle.addComponentAsFirst(boxComponent);
     }
-//
-//    public Component get(int index) {
-//        return middle.getComponentAt(index);
-//    }
 
-    public void clear() {
-        container.removeAll();
+    public void clear(){
+        middle.removeAll();
+        middle.add(makeContainer());
     }
 
     private void init() {
@@ -67,7 +65,7 @@ public class Box extends HorizontalLayout {
         this.add(left, center, right);
     }
 
-    private VerticalLayout makeCenter (){
+    private VerticalLayout makeCenter() {
         top = makeLayout(Insert.TOP);
         bottom = makeLayout(Insert.BOTTOM);
         container = makeContainer();
@@ -79,7 +77,7 @@ public class Box extends HorizontalLayout {
         return center;
     }
 
-    private HorizontalLayout makeContainer (){
+    private HorizontalLayout makeContainer() {
         container = new HorizontalLayout();
         container.setSizeFull();
         DropTarget<HorizontalLayout> dropContainer = DropTarget.create(container);
@@ -93,41 +91,63 @@ public class Box extends HorizontalLayout {
     private VerticalLayout makeLayout(Insert direction) {
         VerticalLayout layout = new VerticalLayout();
         DropTarget<VerticalLayout> dropTarget = DropTarget.create(layout);
-
         switch (direction) {
             case LEFT:
                 layout.setWidth(BORDER, Unit.PIXELS);
                 layout.setHeightFull();
                 setLabel(layout, "\u2190");
                 dropTarget.addDropListener(event -> {
-//                    Box targetBox = (Box) event.getComponent().getParent().get();
-//                    Button targetButton = (Button) targetBox.get(0);
-//                    Button sourceButton = (Button) event.getDragSourceComponent().get();
-//                    if (sourceButton.getText().equals(MyView.CONTENT_GENERATOR)) {
-//                        MyView.changeButton(targetButton);
-//                    } else swapButtons(targetButton, sourceButton);
+                    Component targetComponent = event.getComponent().getParent().get();
+                    if (targetComponent instanceof Box) {
+                        Box targetBox = (Box) targetComponent;
+                        targetBox.putLeft(MyView.createDragAndDropButton());
+                    }
                 });
                 return layout;
             case RIGHT:
                 layout.setWidth(BORDER, Unit.PIXELS);
                 layout.setHeightFull();
                 setLabel(layout, "\u2192");
+                dropTarget.addDropListener(event -> {
+                    Component targetComponent = event.getComponent().getParent().get();
+                    if (targetComponent instanceof Box) {
+                        Box targetBox = (Box) targetComponent;
+                        targetBox.putRight(MyView.createDragAndDropButton());
+                    }
+                });
                 return layout;
             case TOP:
                 layout.setHeight(BORDER, Unit.PIXELS);
                 layout.setWidthFull();
                 setLabel(layout, "\u2191");
+                dropTarget.addDropListener(event -> {
+                    Component targetComponent = event.getComponent().getParent().get();
+                    Box targetBox;
+                    if (targetComponent instanceof Box) {
+                        targetBox = (Box) targetComponent;
+                    } else {
+                        targetBox = (Box) targetComponent.getParent().get();
+                    }
+                    targetBox.putAbove(MyView.createDragAndDropButton());
+                });
                 return layout;
             case BOTTOM:
                 layout.setHeight(BORDER, Unit.PIXELS);
                 layout.setWidthFull();
                 setLabel(layout, "\u2193");
+                dropTarget.addDropListener(event -> {
+                    Component targetComponent = event.getComponent().getParent().get();
+                    Box targetBox;
+                    if (targetComponent instanceof Box) {
+                        targetBox = (Box) targetComponent;
+                    } else {
+                        targetBox = (Box) targetComponent.getParent().get();
+                    }
+                    targetBox.putUnder(MyView.createDragAndDropButton());
+                });
                 return layout;
         }
         return null;
-    }
-
-    private void swapButtons(Button targetButton, Button sourceButton) {
     }
 
     private void setLabel(VerticalLayout layout, String label) {

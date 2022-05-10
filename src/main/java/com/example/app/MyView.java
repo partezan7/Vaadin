@@ -29,12 +29,17 @@ public class MyView extends HorizontalLayout {
         verticalLayout.setWidth(150.0f, Unit.PIXELS);
         Button contentGeneratorButton = new Button(CONTENT_GENERATOR);
         contentGeneratorButton.addClickListener(buttonClickEvent -> {
-//            System.out.println(String.format("butterCounter = %d, contentCounter = %d", buttenCounter, contentCounter));
             addContent();
             buttonCounter++;
         });
         makeButtonDraggable(contentGeneratorButton);
-        verticalLayout.add(contentGeneratorButton);
+        Button clearButton = new Button("Clear all");
+        clearButton.addClickListener(buttonClickEvent -> {
+            startBox.clear();
+            contentCounter = 0;
+            buttonCounter = 0;
+        });
+        verticalLayout.add(contentGeneratorButton, clearButton);
         add(verticalLayout);
         Board board = new Board();
         board.setSizeFull();
@@ -49,7 +54,7 @@ public class MyView extends HorizontalLayout {
                 Box box = new Box(createDragAndDropButton());
                 startBox.put(box);
                 break;
-            case 1:
+            case 4:
                 Box box1 = new Box(createDragAndDropButton());
                 startBox.putLeft(box1);
                 break;
@@ -61,7 +66,7 @@ public class MyView extends HorizontalLayout {
                 Box box3 = new Box(createDragAndDropButton());
                 startBox.putUnder(box3);
                 break;
-            case 4:
+            case 1:
                 Box box4 = new Box(createDragAndDropButton());
                 startBox.putAbove(box4);
                 break;
@@ -73,7 +78,7 @@ public class MyView extends HorizontalLayout {
         Button newButton = new Button(String.valueOf(contentCounter));
         newButton.setSizeFull();
         makeButtonDraggable(newButton);
-        makeButtonAsDropTarget(newButton);
+//        makeButtonAsDropTarget(newButton);
         return newButton;
     }
 
