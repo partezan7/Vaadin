@@ -166,7 +166,7 @@ public class MyView extends HorizontalLayout {
         switch (buttenCounter) {
             case 0:
                 Box box = new Box(createDragAndDropButton());
-                add(box);
+                startBox.put(box);
                 break;
             case 1:
                 Box box1 = new Box(createDragAndDropButton());

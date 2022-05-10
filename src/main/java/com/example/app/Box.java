@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class Box extends HorizontalLayout {
-    final float BORDER = 50.0f;
+    final float BORDER = 10.0f;
     private VerticalLayout left;
     private VerticalLayout center;
     private VerticalLayout right;
@@ -23,29 +23,50 @@ public class Box extends HorizontalLayout {
         init();
         center.addComponentAtIndex(1, component);
     }
+     public void put(Component boxComponent) {
+         System.out.println(center.getComponentCount());
+        if (center.getComponentCount() == 3){
+            clear();
+
+            center.addComponentAtIndex(1, boxComponent);
+
+
+            for (int i = 0; i < center.getComponentCount(); i++) {
+                System.out.println(center.getComponentAt(i));
+            }
+        }
+
+    }
+    public Component get (){
+        if (center.getComponentCount() == 3){
+            return center.getComponentAt(1);
+        }
+        return null;
+    }
+
+    public void clear(){
+        center.remove(center.getComponentAt(1));
+    }
 
     private void init() {
         setSizeFull();
         setMargin(false);
         setSpacing(false);
         setPadding(false);
-//            setMargin(true);
-//            setSpacing(true);
-//            setPadding(true);
         left = new VerticalLayout();
-        setBoard(left, "\u2190");
+        setLabel(left, "\u2190");
         left.setWidth(BORDER, Unit.PIXELS);
         left.setHeightFull();
         right = new VerticalLayout();
-        setBoard(right, "\u2192");
+        setLabel(right, "\u2192");
         right.setWidth(BORDER, Unit.PIXELS);
         right.setHeightFull();
         VerticalLayout top = new VerticalLayout();
-        setBoard(top, "\u2191");
+        setLabel(top, "\u2191");
         top.setHeight(BORDER, Unit.PIXELS);
         top.setWidthFull();
         VerticalLayout bottom = new VerticalLayout();
-        setBoard(bottom, "\u2193");
+        setLabel(bottom, "\u2193");
         bottom.setHeight(BORDER, Unit.PIXELS);
         bottom.setWidthFull();
         center = new VerticalLayout(top, bottom);
@@ -54,16 +75,13 @@ public class Box extends HorizontalLayout {
 
     }
 
-    private void setBoard(VerticalLayout layout, String label) {
+    private void setLabel(VerticalLayout layout, String label) {
         Label text = new Label(label);
         layout.add(text);
         layout.setAlignItems(Alignment.CENTER);
         layout.setJustifyContentMode(JustifyContentMode.CENTER);
-//            left.setMargin(false);
-//            left.setSpacing(false);
-//            left.setPadding(false);
-//            setMargin(true);
-//            setSpacing(true);
-//            setPadding(true);
+            layout.setMargin(false);
+            layout.setSpacing(false);
+            layout.setPadding(false);
     }
 }
