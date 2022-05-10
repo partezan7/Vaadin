@@ -11,8 +11,13 @@ import org.springframework.stereotype.Service;
 public class Box extends HorizontalLayout {
     final float BORDER = 10.0f;
     private VerticalLayout left;
-    private VerticalLayout center;
     private VerticalLayout right;
+    private VerticalLayout top;
+    private VerticalLayout bottom;
+    private VerticalLayout middle;
+    private VerticalLayout center;
+    private HorizontalLayout container;
+
 
     Box() {
         init();
@@ -21,31 +26,37 @@ public class Box extends HorizontalLayout {
 
     Box(Component component) {
         init();
-        center.addComponentAtIndex(1, component);
+        container.add(component);
     }
-     public void put(Component boxComponent) {
-         System.out.println(center.getComponentCount());
-        if (center.getComponentCount() == 3){
+
+    public void put(Component boxComponent) {
+        if (container.getComponentCount() == 1) {
             clear();
-
-            center.addComponentAtIndex(1, boxComponent);
-
-
-            for (int i = 0; i < center.getComponentCount(); i++) {
-                System.out.println(center.getComponentAt(i));
-            }
+            container.addComponentAtIndex(0, boxComponent);
         }
-
     }
-    public Component get (){
-        if (center.getComponentCount() == 3){
+
+    public void putLeft(Component boxComponent) {
+        container.addComponentAsFirst(boxComponent);
+    }
+
+    public void putRight(Component boxComponent) {
+        container.add(boxComponent);
+    }
+
+    public void putUnder(Component boxComponent) {
+        container.add(boxComponent);
+    }
+
+    public Component get() {
+        if (center.getComponentCount() == 3) {
             return center.getComponentAt(1);
         }
         return null;
     }
 
-    public void clear(){
-        center.remove(center.getComponentAt(1));
+    public void clear() {
+        container.removeAll();
     }
 
     private void init() {
@@ -61,15 +72,19 @@ public class Box extends HorizontalLayout {
         setLabel(right, "\u2192");
         right.setWidth(BORDER, Unit.PIXELS);
         right.setHeightFull();
-        VerticalLayout top = new VerticalLayout();
+        top = new VerticalLayout();
         setLabel(top, "\u2191");
         top.setHeight(BORDER, Unit.PIXELS);
         top.setWidthFull();
-        VerticalLayout bottom = new VerticalLayout();
+        bottom = new VerticalLayout();
         setLabel(bottom, "\u2193");
         bottom.setHeight(BORDER, Unit.PIXELS);
         bottom.setWidthFull();
-        center = new VerticalLayout(top, bottom);
+        container = new HorizontalLayout();
+        container.setSizeFull();
+        middle = new VerticalLayout(container);
+        middle.setSizeFull();
+        center = new VerticalLayout(top, middle, bottom);
         center.setSizeFull();
         add(left, center, right);
 
@@ -80,8 +95,8 @@ public class Box extends HorizontalLayout {
         layout.add(text);
         layout.setAlignItems(Alignment.CENTER);
         layout.setJustifyContentMode(JustifyContentMode.CENTER);
-            layout.setMargin(false);
-            layout.setSpacing(false);
-            layout.setPadding(false);
+        layout.setMargin(false);
+        layout.setSpacing(false);
+        layout.setPadding(false);
     }
 }

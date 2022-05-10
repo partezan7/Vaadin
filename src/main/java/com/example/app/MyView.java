@@ -170,11 +170,12 @@ public class MyView extends HorizontalLayout {
                 break;
             case 1:
                 Box box1 = new Box(createDragAndDropButton());
-                add(box1);
+                startBox.putLeft(box1);
                 break;
-//            case 2:
-//                verticalLayout2.add(createDragAndDropButton());
-//                break;
+            case 2:
+                Box box2 = new Box(createDragAndDropButton());
+                startBox.putRight(box2);
+                break;
 //            case 3:
 //                verticalLayout3 = new VerticalLayout();
 //                verticalLayout3.add(createDragAndDropButton());
