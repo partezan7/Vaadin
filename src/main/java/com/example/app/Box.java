@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class Box extends HorizontalLayout {
     final float BORDER = 10.0f;
+    private enum Insert {LEFT, RIGHT, TOP, BOTTOM}
     private VerticalLayout left;
     private VerticalLayout right;
     private VerticalLayout top;
@@ -18,11 +19,9 @@ public class Box extends HorizontalLayout {
     private VerticalLayout center;
     private HorizontalLayout container;
 
-
     Box() {
         init();
     }
-
 
     Box(Component component) {
         init();
@@ -58,24 +57,12 @@ public class Box extends HorizontalLayout {
     }
 
     private void init() {
-        setSizeFull();
+        this.setSizeFull();
         settMarginSpacingPadding(this, false, false, false);
-        left = new VerticalLayout();
-        setLabel(left, "\u2190");
-        left.setWidth(BORDER, Unit.PIXELS);
-        left.setHeightFull();
-        right = new VerticalLayout();
-        setLabel(right, "\u2192");
-        right.setWidth(BORDER, Unit.PIXELS);
-        right.setHeightFull();
-        top = new VerticalLayout();
-        setLabel(top, "\u2191");
-        top.setHeight(BORDER, Unit.PIXELS);
-        top.setWidthFull();
-        bottom = new VerticalLayout();
-        setLabel(bottom, "\u2193");
-        bottom.setHeight(BORDER, Unit.PIXELS);
-        bottom.setWidthFull();
+        left = makeLayout(Insert.LEFT);
+        right = makeLayout(Insert.RIGHT);
+        top = makeLayout(Insert.TOP);
+        bottom = makeLayout(Insert.BOTTOM);
         container = new HorizontalLayout();
         container.setSizeFull();
         middle = new VerticalLayout(container);
@@ -84,8 +71,34 @@ public class Box extends HorizontalLayout {
         center = new VerticalLayout(top, middle, bottom);
         center.setSizeFull();
         settMarginSpacingPadding(center, false, false, false);
-        add(left, center, right);
+        this.add(left, center, right);
+    }
 
+    private VerticalLayout makeLayout(Insert direction) {
+        VerticalLayout layout = new VerticalLayout();
+        switch (direction) {
+            case LEFT:
+                layout.setWidth(BORDER, Unit.PIXELS);
+                layout.setHeightFull();
+                setLabel(layout, "\u2190");
+                return layout;
+            case RIGHT:
+                layout.setWidth(BORDER, Unit.PIXELS);
+                layout.setHeightFull();
+                setLabel(layout, "\u2192");
+                return layout;
+            case TOP:
+                layout.setHeight(BORDER, Unit.PIXELS);
+                layout.setWidthFull();
+                setLabel(layout, "\u2191");
+                return layout;
+            case BOTTOM:
+                layout.setHeight(BORDER, Unit.PIXELS);
+                layout.setWidthFull();
+                setLabel(layout, "\u2193");
+                return layout;
+        }
+        return null;
     }
 
     private void setLabel(VerticalLayout layout, String label) {
@@ -98,7 +111,7 @@ public class Box extends HorizontalLayout {
         settMarginSpacingPadding(layout, false, false, false);
     }
 
-    private void settMarginSpacingPadding (Component layout, boolean margin, boolean spacing, boolean padding){
+    private void settMarginSpacingPadding(Component layout, boolean margin, boolean spacing, boolean padding) {
         var targetLayout = layout instanceof VerticalLayout
                 ? ((VerticalLayout) layout) : (HorizontalLayout) layout;
         targetLayout.setMargin(margin);

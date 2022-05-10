@@ -29,7 +29,7 @@ public class MyView extends HorizontalLayout {
         verticalLayout.setWidth(150.0f, Unit.PIXELS);
         Button contentGeneratorButton = new Button(CONTENT_GENERATOR);
         contentGeneratorButton.addClickListener(buttonClickEvent -> {
-            System.out.println(String.format("butterCounter = %d, contentCounter = %d", buttenCounter, contentCounter));
+//            System.out.println(String.format("butterCounter = %d, contentCounter = %d", buttenCounter, contentCounter));
             addContent();
             buttenCounter++;
         });
@@ -127,8 +127,4 @@ public class MyView extends HorizontalLayout {
         sourceLayout.addComponentAtIndex(sourceButtonIndex, targetButton);
         sourceLayout.remove(sourceButton);
     }
-
-
-
-
 }
