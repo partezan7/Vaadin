@@ -12,9 +12,9 @@ import com.vaadin.flow.router.Route;
 
 @Route("")
 public class MyView extends HorizontalLayout {
-    String CONTENT_GENERATOR = "Content Generator";
-    private int contentCounter = 0;
-    private int buttenCounter = 0;
+    static String CONTENT_GENERATOR = "Content Generator";
+    static private int contentCounter = 0;
+    static private int buttonCounter = 0;
     private VerticalLayout verticalLayout;
     private Box startBox;
 
@@ -31,7 +31,7 @@ public class MyView extends HorizontalLayout {
         contentGeneratorButton.addClickListener(buttonClickEvent -> {
 //            System.out.println(String.format("butterCounter = %d, contentCounter = %d", buttenCounter, contentCounter));
             addContent();
-            buttenCounter++;
+            buttonCounter++;
         });
         makeButtonDraggable(contentGeneratorButton);
         verticalLayout.add(contentGeneratorButton);
@@ -44,7 +44,7 @@ public class MyView extends HorizontalLayout {
     }
 
     private void addContent() {
-        switch (buttenCounter) {
+        switch (buttonCounter) {
             case 0:
                 Box box = new Box(createDragAndDropButton());
                 startBox.put(box);
@@ -68,7 +68,7 @@ public class MyView extends HorizontalLayout {
         }
     }
 
-    private Button createDragAndDropButton() {
+    static Button createDragAndDropButton() {
         contentCounter++;
         Button newButton = new Button(String.valueOf(contentCounter));
         newButton.setSizeFull();
@@ -77,11 +77,11 @@ public class MyView extends HorizontalLayout {
         return newButton;
     }
 
-    private void makeButtonDraggable(Button button) {
+    private static void makeButtonDraggable(Button button) {
         DragSource<Button> dragSource = DragSource.create(button);
     }
 
-    private void makeButtonAsDropTarget(Button button) {
+    private static void makeButtonAsDropTarget(Button button) {
         DropTarget<Button> dropTarget = DropTarget.create(button);
         dropTarget.addDropListener(event -> {
             Button targetButton = event.getComponent();
@@ -93,7 +93,7 @@ public class MyView extends HorizontalLayout {
         });
     }
 
-    private void changeButton(Button targetButton) {
+    static void changeButton(Button targetButton) {
         Button newButton = createDragAndDropButton();
         Component targetComponentParent = targetButton.getParent().get();
         var targetLayout = targetComponentParent instanceof VerticalLayout
@@ -103,7 +103,7 @@ public class MyView extends HorizontalLayout {
         targetLayout.remove(targetButton);
     }
 
-    private void swapButtons(Button targetButton, Button sourceButton) {
+    private static void swapButtons(Button targetButton, Button sourceButton) {
         Component targetComponentParent = targetButton.getParent().get();
         Component sourceComponentParent = sourceButton.getParent().get();
         if (targetComponentParent == sourceComponentParent) {
