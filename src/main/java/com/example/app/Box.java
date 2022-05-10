@@ -30,10 +30,7 @@ public class Box extends HorizontalLayout {
     }
 
     public void put(Component boxComponent) {
-        if (container.getComponentCount() == 1) {
-            clear();
-            container.addComponentAtIndex(0, boxComponent);
-        }
+        container.add(boxComponent);
     }
 
     public void putLeft(Component boxComponent) {
@@ -45,14 +42,15 @@ public class Box extends HorizontalLayout {
     }
 
     public void putUnder(Component boxComponent) {
-        container.add(boxComponent);
+        middle.add(boxComponent);
     }
 
-    public Component get() {
-        if (center.getComponentCount() == 3) {
-            return center.getComponentAt(1);
-        }
-        return null;
+    public void pitAbove(Component boxComponent) {
+        middle.addComponentAsFirst(boxComponent);
+    }
+
+    public Component get(int index) {
+        return middle.getComponentAt(index);
     }
 
     public void clear() {
@@ -61,9 +59,7 @@ public class Box extends HorizontalLayout {
 
     private void init() {
         setSizeFull();
-        setMargin(false);
-        setSpacing(false);
-        setPadding(false);
+        settMarginSpacingPadding(this, false, false, false);
         left = new VerticalLayout();
         setLabel(left, "\u2190");
         left.setWidth(BORDER, Unit.PIXELS);
@@ -84,19 +80,29 @@ public class Box extends HorizontalLayout {
         container.setSizeFull();
         middle = new VerticalLayout(container);
         middle.setSizeFull();
+        settMarginSpacingPadding(middle, false, false, false);
         center = new VerticalLayout(top, middle, bottom);
         center.setSizeFull();
+        settMarginSpacingPadding(center, false, false, false);
         add(left, center, right);
 
     }
 
     private void setLabel(VerticalLayout layout, String label) {
         Label text = new Label(label);
+        text.setHeight(BORDER, Unit.PIXELS);
+        text.setWidth(BORDER, Unit.PIXELS);
         layout.add(text);
         layout.setAlignItems(Alignment.CENTER);
         layout.setJustifyContentMode(JustifyContentMode.CENTER);
-        layout.setMargin(false);
-        layout.setSpacing(false);
-        layout.setPadding(false);
+        settMarginSpacingPadding(layout, false, false, false);
+    }
+
+    private void settMarginSpacingPadding (Component layout, boolean margin, boolean spacing, boolean padding){
+        var targetLayout = layout instanceof VerticalLayout
+                ? ((VerticalLayout) layout) : (HorizontalLayout) layout;
+        targetLayout.setMargin(margin);
+        targetLayout.setSpacing(spacing);
+        targetLayout.setPadding(padding);
     }
 }
