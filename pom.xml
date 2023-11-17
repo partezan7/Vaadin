@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <vaadin.version>23.0.7</vaadin.version>
     </properties>
 
@@ -41,6 +41,13 @@
         <repository>
             <id>Vaadin Directory</id>
             <url>https://maven.vaadin.com/vaadin-addons</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>Vaadin Directory Plus</id>
+            <url>https://vaadin.com/nexus/content/repositories/vaadin-addons/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -122,11 +129,6 @@
             <artifactId>webdrivermanager</artifactId>
             <version>5.0.3</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.vaadin</groupId>
-            <artifactId>elements</artifactId>
-            <version>0.2.2</version>
         </dependency>
     </dependencies>
 
